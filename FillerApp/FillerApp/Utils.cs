@@ -21,7 +21,12 @@ namespace FillerApp
             var jso = Utils.GetDefaultJsonOptions();
             Console.WriteLine(Constants.HistoryBasePath);
             using var streamReader = new StreamReader(filepath);
-            return JsonSerializer.Deserialize<List<Task>>(streamReader.ReadToEnd(), jso);
+            var text = streamReader.ReadToEnd();
+            if (text.Length == 0)
+            {
+                return new List<Task> { };
+            }
+            return JsonSerializer.Deserialize<List<Task>>(text, jso);
         }
 
         public static void WriteTasksToFile(string filepath, IEnumerable<Task> tasks)
