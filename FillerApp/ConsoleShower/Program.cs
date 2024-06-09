@@ -64,7 +64,7 @@ namespace ConsoleShower
             var totalAnsCow = 0;
             while (true)
             {
-                var task = sampler.Sample(lastResult);
+                var task = sampler.Sample(!lastResult);
                 Utils.WriteListToFile(weightsFilepath, sampler.GetWeights().ToList());
                 RenderTask(task);
                 lastResult = AcceptAnswer(task);
