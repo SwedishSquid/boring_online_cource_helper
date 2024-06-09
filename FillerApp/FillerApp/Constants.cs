@@ -12,6 +12,8 @@ namespace FillerApp
 
         public static string HistoryBaseFilename { get; set; } = "historyBase.txt";
 
+        public static string HistoryWeightsPath => $"{RootPath}\\historyWeights.txt";
+
         public static string HistoryBasePath => $"{RootPath}\\{HistoryBaseFilename}";
     }
 }

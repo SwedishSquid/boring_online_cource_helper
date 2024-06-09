@@ -10,7 +10,8 @@ namespace ConsoleShower
         {
             var filepath = Constants.HistoryBasePath;
             var taskList = Utils.ReadTasksFromFile(filepath);
-            Start(taskList);
+            //Start(taskList);
+            ShowWeighted(taskList, Constants.HistoryWeightsPath);
         }
 
         public static void Start(List<FillerApp.Task> taskList)
@@ -43,6 +44,45 @@ namespace ConsoleShower
                 var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
+            }
+        }
+
+        public static void ShowWeighted(List<FillerApp.Task> tasks, string weightsFilepath)
+        {
+            List<int> weights = null;
+            if (Path.Exists(weightsFilepath))
+            {
+                Console.WriteLine($"weights found at {weightsFilepath}");
+                weights = Utils.ReadListFromFile<int>(weightsFilepath);
+            }
+
+            var sampler = new WeightedSampler<FillerApp.Task>(tasks, weights);
+
+            bool? lastResult = null;
+
+            var rightAnsCow = 0;
+            var totalAnsCow = 0;
+            while (true)
+            {
+                var task = sampler.Sample(lastResult);
+                Utils.WriteListToFile(weightsFilepath, sampler.GetWeights().ToList());
+                RenderTask(task);
+                lastResult = AcceptAnswer(task);
+                totalAnsCow += 1;
+                if (lastResult.HasValue && lastResult.Value)
+                {
+                    rightAnsCow++;
+                }
+
+                Console.WriteLine("^^^^^ right ans ^^^^^^^");
+                foreach (var rightAns in task.TrueAnswers)
+                {
+                    Console.WriteLine(rightAns);
+                }
+                Console.WriteLine($"++++++ {rightAnsCow} / {totalAnsCow} wich is {100 * rightAnsCow / (totalAnsCow + 0.0)} %   +++++");
+                Console.Write("press any button to continue");
+                Console.ReadKey();
+                Console.WriteLine();
             }
         }
 

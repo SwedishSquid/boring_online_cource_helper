@@ -19,7 +19,6 @@ namespace FillerApp
         public static List<Task> ReadTasksFromFile(string filepath)
         {
             var jso = Utils.GetDefaultJsonOptions();
-            Console.WriteLine(Constants.HistoryBasePath);
             using var streamReader = new StreamReader(filepath);
             var text = streamReader.ReadToEnd();
             if (text.Length == 0)
@@ -33,6 +32,24 @@ namespace FillerApp
         {
             using var streamWriter = new StreamWriter(filepath);
             streamWriter.WriteLine(JsonSerializer.Serialize(tasks.ToList(), GetDefaultJsonOptions()));
+        }
+
+        public static List<T> ReadListFromFile<T>(string filepath)
+        {
+            using var streamReader = new StreamReader(filepath);
+            var text = streamReader.ReadToEnd();
+            var jso = Utils.GetDefaultJsonOptions();
+            if (text.Length == 0)
+            {
+                return new List<T> { };
+            }
+            return JsonSerializer.Deserialize<List<T>>(text, jso);
+        }
+
+        public static void WriteListToFile<T>(string filepath, List<T> data)
+        {
+            using var streamWriter = new StreamWriter(filepath);
+            streamWriter.WriteLine(JsonSerializer.Serialize(data, GetDefaultJsonOptions()));
         }
     }
 }
